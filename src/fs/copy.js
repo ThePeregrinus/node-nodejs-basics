@@ -12,11 +12,15 @@ const copy = async () => {
     const files = await fs.readdir(oldPath, "utf8");
     await fs.mkdir(newPath);
 
-    files.forEach((file) => {
-      fs.writeFile(path.join(newPath, file), file);
-    });
+    files.forEach(async (file) => {
+      const pathToOldFile = path.join(oldPath, file);
+      const pathToNewFile = path.join(newPath, file);
 
-    console.log(files);
+      const stat = await fs.stat(pathToOldFile);
+      if (stat.isDirectory(pathToOldFile, file))
+        reccursiveFunc(pathToOldFile, pathToNewFile);
+      else fs.writeFile(pathToNewFile, file);
+    });
   };
 
   try {
