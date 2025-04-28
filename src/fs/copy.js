@@ -13,7 +13,7 @@ const copy = async () => {
     await fs.mkdir(newPath);
 
     files.forEach((file) => {
-      fs.writeFile(path.join(newDirectoryPath, file), file);
+      fs.writeFile(path.join(newPath, file), file);
     });
 
     console.log(files);
