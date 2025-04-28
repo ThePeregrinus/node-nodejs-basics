@@ -12,7 +12,7 @@ const create = async () => {
   try {
     await fs.writeFile(directory, content, { flag: "ax" });
   } catch (err) {
-    throw new Error(err);
+    throw new Error("FS operation failed");
   }
 };
 
