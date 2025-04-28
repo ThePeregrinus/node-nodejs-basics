@@ -8,22 +8,29 @@ const copy = async () => {
   const oldDirectoryPath = path.join(__dirname, "files");
   const newDirectoryPath = path.join(__dirname, "files_copy");
 
-  const reccursiveFunc = async (oldPath, newPath) => {
-    const files = await fs.readdir(oldPath, "utf8");
-    await fs.mkdir(newPath);
-
-    files.forEach(async (file) => {
-      const pathToOldFile = path.join(oldPath, file);
-      const pathToNewFile = path.join(newPath, file);
-
-      const stat = await fs.stat(pathToOldFile);
-      if (stat.isDirectory(pathToOldFile, file))
-        reccursiveFunc(pathToOldFile, pathToNewFile);
-      else fs.writeFile(pathToNewFile, file);
-    });
-  };
-
   try {
+    try {
+      await fs.access(newDirectoryPath);
+      throw new Error("FS operation failed");
+    } catch (e) {
+      if (e.code !== "ENOENT") throw e;
+    }
+
+    const reccursiveFunc = async (oldPath, newPath) => {
+      const files = await fs.readdir(oldPath, "utf8");
+      await fs.mkdir(newPath);
+
+      files.forEach(async (file) => {
+        const pathToOldFile = path.join(oldPath, file);
+        const pathToNewFile = path.join(newPath, file);
+
+        const stat = await fs.stat(pathToOldFile);
+        if (stat.isDirectory(pathToOldFile, file))
+          reccursiveFunc(pathToOldFile, pathToNewFile);
+        else fs.writeFile(pathToNewFile, file);
+      });
+    };
+
     reccursiveFunc(oldDirectoryPath, newDirectoryPath);
   } catch {
     throw new Error("FS operation failed");
