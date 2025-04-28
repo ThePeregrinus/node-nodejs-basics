@@ -10,13 +10,11 @@ const copy = async () => {
 
   try {
     try {
-      await Promise.all(
-        fs.access(newDirectoryPath),
-        fs.access(oldDirectoryPath)
-      );
+      await fs.access(newDirectoryPath);
       throw new Error("FS operation failed");
     } catch (e) {
       if (e.code !== "ENOENT") throw e;
+      await fs.access(oldDirectoryPath);
     }
 
     const reccursiveFunc = async (oldPath, newPath) => {
