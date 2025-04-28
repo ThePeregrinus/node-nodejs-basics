@@ -10,7 +10,10 @@ const copy = async () => {
 
   try {
     try {
-      await fs.access(newDirectoryPath);
+      await Promise.all(
+        fs.access(newDirectoryPath),
+        fs.access(oldDirectoryPath)
+      );
       throw new Error("FS operation failed");
     } catch (e) {
       if (e.code !== "ENOENT") throw e;
